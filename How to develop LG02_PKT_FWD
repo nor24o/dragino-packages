@@ -1,0 +1,21 @@
+> I managed to download and build the project on an old VPS which still is running Ubuntu 14.04. On my current 'normal' machine, the version of `ncurses` is already so much newer that the `menuconfig`-program does not even start up 🤷‍♂️ .
+> 
+> You might be able to reproduce it by e.g. running version 14.04 of Ubuntu in a virtual machine or container.
+> 
+> The steps I followed were these:
+> 
+> 2. Download and extract Dragino's OpenWRT SDK fork. Make it your current directory in the shell.
+> 3. Run `./scripts/feeds update -a` (**This is missing from Dragino's the current readme about building your own package!**)
+> 4. Copy the files [in this folder](https://github.com/dragino/dragino-packages/tree/lg02/lg02-pkt-fwd) over to `./package/lg02-pkt-fwd`.
+> 5. Be sure to remove all current `*.o` object files which are in the `./package/lg02-pkt-fwd` directory! If you don't, you will get very confusing linker errors. (**This is also missing from the current readme**) Even `make clean` will not correctly remove them (and instead might remove other files that the build process depends on, which are not remade when running a normal `make`, so then you'll have to restart from step (1.) ...)
+> 6. Run `make menuconfig`, and be sure that the package is selected under 'Utilities'. Save this config and exit.
+> 7. Make any changes to the source code you wish, by modifying the files at `./package/lg02-pkt-fwd/...`.
+> 8. Run `make`. If there's errors, you can see them in detail by running `make -j1 V=s` instead.
+> 9. If compilation was successful, the built package can now be found under `./bin/packages/mips_24kc/base/`. It is named something like `lg02_pkt_fwd_1.2.1-1_mips_24kc.ipk`.
+> 10. Copy it over to your Dragino LG02, using e.g. `scp` (for instance: `scp -P 2222 ./lg02_pkt_fwd_1.2.1-1_mips_24kc.ipk root@dragino_ip_address:/tmp/` .
+> 11. On the Dragino run `opkg remove lg02_pkt_fwd` followed by `opkg install /tmp/lg02_pkt_fwd_1.2.1-1_mips_24kc.ipk` (or what the exact filename may be).
+> 
+> For clarity: I wanted to make changes to the code of the Dragino LG02's `lg02_pkt_fwd` code. I expect that for one of the other packages the process will be similar, but you might need to make some further changes.
+
+
+https://github.com/dragino/dragino-packages/issues/8#issuecomment-880613952
